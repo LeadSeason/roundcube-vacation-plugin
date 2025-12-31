@@ -4,17 +4,16 @@
  *
  * @package	plugins
  * @uses	rcube_plugin
- * @author	Jasper Slits <jaspersl at gmail dot com>
- * @version	1.9
+ * @author	Jasper Slits <jaspersl@gmail.com>
+ * @version	2.1.6
  * @license     GPL
- * @link	https://sourceforge.net/projects/rcubevacation/
+ * @link	https://github.com/bukowski12/roundcube-vacation-plugin
  * @todo	See README.TXT
  *
  * Contributions by Johnson Chow
  * Changes to work with Round Cube 1.2.4 and UTF-8 : neil77pl
+ *
  */
-
-
 
 class SSHFTP extends VacationDriver {
 	private $ftp = false;

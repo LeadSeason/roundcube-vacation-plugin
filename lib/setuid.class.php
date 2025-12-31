@@ -1,16 +1,16 @@
 <?php
-
 /*
  * Setuid driver
  *
  * @package	plugins
  * @uses	rcube_plugin
- * @author	Jasper Slits <jaspersl at gmail dot com>
- * @version	1.9
+ * @author	Jasper Slits <jaspersl@gmail.com>
+ * @version	2.1.6
  * @license     GPL
- * @link	https://sourceforge.net/projects/rcubevacation/
+ * @link	https://github.com/bukowski12/roundcube-vacation-plugin
  * @todo	See README.TXT
-*/
+ */
+
 class setuid extends VacationDriver {
 
     private $webserver_user = null;
