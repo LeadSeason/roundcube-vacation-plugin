@@ -6,11 +6,11 @@
  * @package	plugins
  * @uses	rcube_plugin
  * @author	Jasper Slits <jaspersl@gmail.com>
- * @version	2.1.5
+ * @version	2.1.6
  * @license	GPL
  * @link	https://github.com/bukowski12/roundcube-vacation-plugin
  * @todo	See README.TXT
-*/
+ */
 
 // Load required dependencies
 require 'lib/vacationdriver.class.php';
@@ -90,7 +90,7 @@ class vacation extends rcube_plugin {
         $this->v->init();
         
         if ($this->v->save()) {
-//         $this->v->getActionText();// Dummy for now
+        // $this->v->getActionText();// Dummy for now
             $rcmail->output->show_message($this->gettext("success_changed"), 'confirmation');
         } else {
             $rcmail->output->show_message($this->gettext("failed"), 'error');
