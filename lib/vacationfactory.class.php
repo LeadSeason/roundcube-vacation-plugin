@@ -23,8 +23,12 @@ class VacationDriverFactory {
 	 * @return object specific driver */
     public static function Create( $driver ) {
         $driver = strtolower($driver);
-		$driverclass = sprintf("plugins/vacation/lib/%s.class.php",$driver);
-		
+	$driverclass = sprintf("plugins/vacation/lib/%s.class.php",$driver);
+
+    if (version_compare(RCMAIL_VERSION, '1.7.0', '>=')) {
+      $driverclass = sprintf(INSTALL_PATH . "plugins/vacation/lib/%s.class.php",$driver);
+    }
+
         if (! is_readable($driverclass)) {
              rcube::raise_error(array('code' => 601,'type' => 'php','file' => __FILE__,
                 'message' => sprintf("Vacation plugin: Driver '%s' cannot be loaded using %s",$driver,$driverclass)
