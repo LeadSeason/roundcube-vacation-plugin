@@ -273,17 +273,18 @@ class Virtual extends VacationDriver {
 
         $rows = array();
 
-        while (list($row) = $this->db->fetch_array($res)) {
+        while ($result = $this->db->fetch_array($res)) {
+          $row = $result[0] ?? null;
 
-            // Postfix accepts multiple aliases on 1 row as well as an alias per row
+          if ($row !== null) {
+          // Postfix accepts multiple aliases on 1 row as well as an alias per row
             if (strpos($row, ",") !== false) {
-                $rows = explode(",", $row);
+              $rows = array_merge($rows, explode(",", $row));
             } else {
-                $rows[] = $row;
+              $rows[] = $row;
             }
+          }
         }
-
-
 
         foreach ($rows as $row) {
             // Source = destination means keep a local copy
