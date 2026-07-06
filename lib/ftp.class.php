@@ -25,8 +25,12 @@ class FTP extends VacationDriver {
 			$port = 21 ;
 		}
 		
+		// Use plain FTP when explicitly disabled in config.ini, SSL otherwise (default)
+		$use_ssl = !array_key_exists('ssl', $this->cfg) || $this->cfg['ssl'];
+		$connect = $use_ssl ? 'ftp_ssl_connect' : 'ftp_connect';
+
 		// 15 second time-out
-		if (! $this->ftp = ftp_ssl_connect($this->cfg['server'],$port,15)) {
+		if (! $this->ftp = $connect($this->cfg['server'],$port,15)) {
 			 rcube::raise_error(array('code' => 601, 'type' => 'php', 'file' => __FILE__,
                 'message' => sprintf("Vacation plugin: Cannot connect to the FTP-server '%s'",$this->cfg['server'])
 			),true, true);
@@ -91,21 +95,21 @@ class FTP extends VacationDriver {
 		$this->disable();
 
 		$d = new DotForward;
-			$email = $this->identity['email'];
+		$email = $this->identity['email'];
 
 		// Always persist the vacation message file, so subject/body edits
 		// aren't lost while the autoresponder itself is turned off.
-			$full_name = iconv("UTF-8","ASCII//TRANSLIT",$this->identity['name']);
+		$full_name = iconv("UTF-8","ASCII//TRANSLIT",$this->identity['name']);
 
-			if (!empty($full_name)) {
-				$vacation_header = sprintf("From: %s <%s>\n",$full_name,$email);
-			} else {
-				$vacation_header = sprintf("From: %s\n",$email);
-			}
-			$vacation_header .= sprintf("Subject: %s\n",$this->subject);
-			$vacation_header .= sprintf("MIME-Version: %s\nContent-Type: %s\nContent-Transfer-Encoding: %s\n\n","1.0","text/html; charset=\"UTF-8\"","8bit");
-			$message = $vacation_header.preg_replace('/\r\n?/', "<br/>",$this->body);
-			$this->uploadfile($message,$this->dotforward['message']);
+		if (!empty($full_name)) {
+			$vacation_header = sprintf("From: %s <%s>\n",$full_name,$email);
+		} else {
+			$vacation_header = sprintf("From: %s\n",$email);
+		}
+		$vacation_header .= sprintf("Subject: %s\n",$this->subject);
+		$vacation_header .= sprintf("MIME-Version: %s\nContent-Type: %s\nContent-Transfer-Encoding: %s\n\n","1.0","text/html; charset=\"UTF-8\"","8bit");
+		$message = $vacation_header.preg_replace('/\r\n?/', "<br/>",$this->body);
+		$this->uploadfile($message,$this->dotforward['message']);
 
 		// Enable auto-reply?
 		if ($this->enable) {

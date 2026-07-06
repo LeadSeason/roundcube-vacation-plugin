@@ -37,6 +37,10 @@ If 'port' is omitted, the FTP driver will use the default port 21. Optional.
 - passive = False
 If set, the FTP driver will try to establish a passive FTP connection. Optional.
 
+- ssl = True
+If 'ssl' is omitted, the FTP driver connects using FTPS (ftp_ssl_connect). Set to
+False to use a plain, unencrypted FTP connection (ftp_connect) instead. Optional.
+
 - disable_forward = False
 If set to True, the end-user will not be able to set forwards. Defaults to false. Optional.
 
