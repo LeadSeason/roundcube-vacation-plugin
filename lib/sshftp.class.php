@@ -87,11 +87,25 @@ class SSHFTP extends VacationDriver {
 		$this->disable();
 
 		$d = new DotForward;
+		$email = $this->identity['email'];
+
+		// Always persist the vacation message file, so subject/body edits
+		// aren't lost while the autoresponder itself is turned off.
+		$full_name = iconv("UTF-8","ASCII//TRANSLIT",$this->identity['name']);
+
+		if (!empty($full_name)) {
+			$vacation_header = sprintf("From: %s <%s>\n",$full_name,$email);
+		} else {
+			$vacation_header = sprintf("From: %s\n",$email);
+		}
+		$vacation_header .= sprintf("Subject: %s\n",$this->subject);
+		$vacation_header .= sprintf("MIME-Version: %s\nContent-Type: %s\nContent-Transfer-Encoding: %s\n\n","1.0","text/html; charset=\"UTF-8\"","8bit");
+		$message = $vacation_header.preg_replace('/\r\n?/', "<br/>",$this->body);
+		$this->uploadfile($message,$this->dotforward['message']);
+
 		// Enable auto-reply?
 		if ($this->enable) {
 			$d->mergeOptions($this->dotforward);
-
-			$email = $this->identity['email'];
 
 			// Set the envelop sender to the current idendity's email address
 			if (isset($this->dotforward['set_envelop_sender']) && $this->dotforward['set_envelop_sender']) {
@@ -99,23 +113,6 @@ class SSHFTP extends VacationDriver {
 			}
 
 			$d->setOption("aliases",$this->aliases);
-			
-
-
-			// Create the .vacation.message file
-
-			$full_name = iconv("UTF-8","ASCII//TRANSLIT",$this->identity['name']);
-
-			if (!empty($full_name)) {
-				$vacation_header = sprintf("From: %s <%s>\n",$full_name,$email);
-			} else {
-				$vacation_header = sprintf("From: %s\n",$email);
-			}
-			$vacation_header .= sprintf("Subject: %s\n",$this->subject);
-			$vacation_header .= sprintf("MIME-Version: %s\nContent-Type: %s\nContent-Transfer-Encoding: %s\n\n","1.0","text/html; charset=\"UTF-8\"","8bit");
-			$message = $vacation_header.preg_replace('/\r\n?/', "<br/>",$this->body);
-			$this->uploadfile($message,$this->dotforward['message']);
-
 		}
 		$d->setOption("username",$this->user->data['username']);
 		$d->setOption("keepcopy",$this->keepcopy);

@@ -91,21 +91,10 @@ class FTP extends VacationDriver {
 		$this->disable();
 
 		$d = new DotForward;
-		// Enable auto-reply?
-		if ($this->enable) {
-			$d->mergeOptions($this->dotforward);
-
 			$email = $this->identity['email'];
 
-			// Set the envelop sender to the current idendity's email address
-			if (isset($this->dotforward['set_envelop_sender']) && $this->dotforward['set_envelop_sender']) {
-				$d->setOption("envelop_sender",$email);
-			}
-			
-			$d->setOption("aliases",$this->aliases);
-
-			// Create the .vacation.message file
-
+		// Always persist the vacation message file, so subject/body edits
+		// aren't lost while the autoresponder itself is turned off.
 			$full_name = iconv("UTF-8","ASCII//TRANSLIT",$this->identity['name']);
 
 			if (!empty($full_name)) {
@@ -118,6 +107,16 @@ class FTP extends VacationDriver {
 			$message = $vacation_header.preg_replace('/\r\n?/', "<br/>",$this->body);
 			$this->uploadfile($message,$this->dotforward['message']);
 
+		// Enable auto-reply?
+		if ($this->enable) {
+			$d->mergeOptions($this->dotforward);
+
+			// Set the envelop sender to the current idendity's email address
+			if (isset($this->dotforward['set_envelop_sender']) && $this->dotforward['set_envelop_sender']) {
+				$d->setOption("envelop_sender",$email);
+			}
+
+			$d->setOption("aliases",$this->aliases);
 		}
 		$d->setOption("username",$this->user->data['username']);
 		$d->setOption("keepcopy",$this->keepcopy);

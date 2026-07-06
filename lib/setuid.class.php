@@ -70,27 +70,27 @@ class setuid extends VacationDriver {
         $this->disable();
 
         $d = new DotForward;
+        $email = $this->identity['email'];
+        $full_name = $this->identity['name'];
+
+        // Always persist the vacation message file, so subject/body edits
+        // aren't lost while the autoresponder itself is turned off.
+        if (!empty($full_name)) {
+            $vacation_header = sprintf("From: %s <%s>\n", $full_name, $email);
+        } else {
+            $vacation_header = sprintf("From: %s\n", $email);
+        }
+        $vacation_header .= sprintf("Subject: %s\n\n", $this->subject);
+        $message = $vacation_header . $this->body;
+        $this->uploadfile($message, $this->dotforward['message']);
+
         // Enable auto-reply?
         if ($this->enable) {
             $d->mergeOptions($this->dotforward);
 
-            // Create the .vacation.message file
-            $email = $this->identity['email'];
-            $full_name = $this->identity['name'];
-
             if (isset($this->dotforward['set_envelop_sender']) && $this->dotforward['set_envelop_sender']) {
                 $d->setOption("envelop_sender", $email);
             }
-
-            if (!empty($full_name)) {
-                $vacation_header = sprintf("From: %s <%s>\n", $full_name, $email);
-            } else {
-                $vacation_header = sprintf("From: %s\n", $email);
-            }
-            $vacation_header .= sprintf("Subject: %s\n\n", $this->subject);
-            $message = $vacation_header . $this->body;
-            $this->uploadfile($message, $this->dotforward['message']);
-
         }
         $d->setOption("username", $this->user->data['username']);
         $d->setOption("keepcopy", $this->keepcopy);
