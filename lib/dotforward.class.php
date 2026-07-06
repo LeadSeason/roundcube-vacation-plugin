@@ -91,12 +91,19 @@ class DotForward {
 
         $arr = explode(",", trim($dotForward));
 
-        $first_element = array_shift($arr);
-
 		// @TODO: test to see if $first_element equals vacation binary
 
-        $this->options['keepcopy'] = ($first_element == $this->options['username']);
-        if (!$this->options['keepcopy']) { $this->options['forward'] = $first_element; }
+        // If the first entry is the vacation binary invocation itself, there is no
+        // keepcopy/forward field to consume (e.g. autoreply enabled, keepcopy and
+        // forward both off) - leave $arr untouched so the loop below can detect it.
+        if (!empty($arr) && substr($arr[0], 0, 1) == '/') {
+            $this->options['keepcopy'] = false;
+        } else {
+            $first_element = array_shift($arr);
+
+            $this->options['keepcopy'] = ($first_element == $this->options['username']);
+            if (!$this->options['keepcopy']) { $this->options['forward'] = $first_element; }
+        }
 
         // Check for aliases
         $aliasArr = array();
