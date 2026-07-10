@@ -58,7 +58,10 @@ public function loadDefaults() {
 
 
     $file = "plugins/vacation/" . $this->cfg['body'];
-    
+
+    if (version_compare(RCMAIL_VERSION, '1.7.0', '>=')) {
+      $file = INSTALL_PATH . "plugins/vacation/" . $this->cfg['body'];
+    }
 
     if (is_readable($file)) {
         $defaults = array('subject'=>$this->cfg['subject']);

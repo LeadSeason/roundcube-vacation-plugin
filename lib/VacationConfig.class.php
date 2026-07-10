@@ -45,6 +45,11 @@ class VacationConfig
 	private function parseIni()
 	{
 		$configini = "plugins/vacation/config.ini";		
+
+    if (version_compare(RCMAIL_VERSION, '1.7.0', '>=')) {
+      $configini = INSTALL_PATH . "plugins/vacation/config.ini";
+    }
+
 		if (! is_readable($configini))
 		{
 			$this->hasError = $configini." is not readable";
